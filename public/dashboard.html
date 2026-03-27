@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERC-8004 Evolution | Strategy Governance Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6s8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8......" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.9.0/dist/ethers.umd.min.js" integrity="sha384-6s8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8......" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .version-badge {
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .badge-active {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+        }
+        .badge-inactive {
+            background-color: rgba(148, 163, 184, 0.2);
+            color: var(--text-secondary);
+        }
+        .badge-rollback {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+        .version-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .version-item:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            transform: translateX(5px);
+        }
+        .version-item:last-child {
+            border-bottom: none;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .voting-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        .vote-count {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .performance-metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .metric-label {
+            color: var(--text-secondary);
+        }
+        .metric-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .merkle-proof {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+        }
+        .action-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .status-connected {
+            background-color: var(--success-color);
+            box-shadow: 0 0 10px var(--success-color);
+        }
+        .status-disconnected {
+            background-color: var(--danger-color);
+        }
+        .contract-address {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .tab-content {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .nav-tabs .nav-link {
+            color: var(--text-secondary);
+            border: none;
+            padding: 12px 24px;
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background-color: transparent;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .nav-tabs {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        .version-details {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .copy-btn:hover {
+            color: var(--primary-color);
+        }
+        .merkle-tree-visual {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .tree-node {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin: 5px;
+        }
+        .tree-line {
+            width: 2px;
+            height: 30px;
+            background: var(--text-secondary);
+            opacity: 0.3;
+        }
+        .performance-chart {
+            height: 250px;
+        }
+        .version-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .comparison-card {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .comparison-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .comparison-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        .governance-timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 20px;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 15px 0;
+            border-left: 2px solid var(--primary-color);
+            margin-left: 10px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 20px;
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .timeline-action {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .proposal-card {
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .proposal-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        .proposal-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+        .status-active {
+            background-color: rgba(99, 102, 241, 0.2);
+            color: var(--primary-color);
+        }
+        .status-completed {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+        }
+        .status-failed {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+        .vote-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .vote-bar-yes {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+            transition: width 0.5s ease;
+        }
+        .vote-bar-no {
+            height: 100%;
+            background: linear-gradient(90deg, var(--danger-color), var(--warning-color));
+            transition: width 0.5s ease;
+        }
+        .footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+        }
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <span class="status-indicator status-disconnected" id="connectionStatus"></span>
+                ERC-8004 Evolution
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="contract-address me-3" id="contractAddress">Not Connected</span>
+                <button class="btn btn-outline-light btn-sm" id="connectWallet">Connect Wallet</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Strategy Governance Dashboard</span>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm action-btn" id="refreshData">
+                                <span class="loading-spinner" id="refreshSpinner" style="display: none;"></span>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="totalVersions">0</div>
+                                    <div class="stat-label">Total Versions</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="activeVersions">0</div>
+                                    <div class="stat-label">Active Strategies</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="totalProposals">0</div>
+                                    <div class="stat-label">Governance Proposals</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="avgPerformance">0%</div>
+                                    <div class="stat-label">Avg Performance</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="dashboardTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="versions-tab" data-bs-toggle="tab" data-bs-target="#versions" type="button" role="tab">Strategy Versions</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="voting-tab" data-bs-toggle="tab" data-bs-target="#voting" type="button" role="tab">Governance Voting</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="performance-tab" data-bs-toggle="tab" data-bs-target="#performance" type="button" role="tab">Performance Metrics</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="provenance-tab" data-bs-toggle="tab" data-bs-target="#provenance" type="button" role="tab">Provenance Chain</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="dashboardTabContent">
+                            <div class="tab-pane fade show active" id="versions" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="version-list" id="versionList">
+                                            <div class="text-center text-muted py-5">
+                                                <div class="loading-spinner" style="width: 40px; height: 40px; margin-bottom: 15px;"></div>
+                                                <p>Loading strategy versions...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="voting" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="governance-timeline" id="votingTimeline">
+                                            <div class="text-center text-muted py-5">
+                                                <p>Loading governance proposals...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="performance" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header">Performance Over Time</div>
+                                            <div class="card-body">
+                                                <div class="chart-container">
+                                                    <canvas id="performanceChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header">Version Comparison</div>
+                                            <div class="card-body">
+                                                <div class="version-comparison" id="versionComparison">
+                                                    <div class="comparison-card">
+                                                        <div class="comparison-value" id="compWinRate">0%</div>
+                                                        <div class="comparison-label">Win Rate</div>
+                                                    </div>
+                                                    <div class="comparison-card">
+                                                        <div class="comparison-value" id="compSharpe">0.00</div>
+                                                        <div class="comparison-label">Sharpe Ratio</div>
+                                                    </div>
+                                                    <div class="comparison-card">
+                                                        <div class="comparison-value" id="compDrawdown">0%</div>
+                                                        <div class="comparison-label">Max Drawdown</div>
+                                                    </div>
+                                                    <div class="comparison-card">
+                                                        <div class="comparison-value" id="compTrades">0</div>
+                                                        <div class="comparison-label">Total Trades</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="provenance" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">Strategy Provenance Chain (SPC)</div>
+                                            <div class="card-body">
+                                                <div class="merkle-tree-visual" id="merkleTreeVisual">
+                                                    <div class="text-center text-muted">
+                                                        <p>Visualizing Merkle-linked strategy history</p>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-4">
+                                                    <h6 class="mb-3">Merkle Root Verification</h6>
+                                                    <div class="merkle-proof" id="merkleProof">
+                                                        Loading merkle proof data...
+                                                    </div>
+                                                    <button class="btn btn-sm action-btn mt-3" id="verifyMerkle">Verify Merkle Proof</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="refresh-btn" id="autoRefresh" title="Auto-refresh data">
+        <span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span>
+    </button>
+
+    <div class="footer">
+        <div class="container">
+            <p>ERC-8004 Evolution | DAO-Governed Strategy Upgrades | Strategy Provenance Chain (SPC)</p>
+            <p class="small">All strategy upgrades require on-chain governance approval. No trust assumptions.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script>
+        class Dashboard {
+            constructor() {
+                this.provider = null;
+                this.signer = null;
+                this.agentContract = null;
+                this.governanceContract = null;
+                this.historyContract = null;
+                this.performanceChart = null;
+                this.autoRefreshInterval = null;
+                this.isAutoRefreshEnabled = false;
+                this.versionData = [];
+                this.proposalData = [];
+                this.performanceData = [];
+                this.init();
+            }
+
+            async init() {
+                this.bindEvents();
+                this.loadContractAddresses();
+                if (window.ethereum) {
+                    await this.connectWallet();
+                }
+                this.startAutoRefresh();
+            }
+
+            bindEvents() {
+                document.getElementById('connectWallet').addEventListener('click', () => this.connectWallet());
+                document.getElementById('refreshData').addEventListener('click', () => this.refreshAllData());
+                document.getElementById('verifyMerkle').addEventListener('click', () => this.verifyMerkleProof());
+                document.getElementById('autoRefresh').addEventListener('click', () => this.toggleAutoRefresh());
+            }
+
+            loadContractAddresses() {
+                const addresses = {
+                    agent: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
+                    governance: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+                    history: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+                };
+                document.getElementById('contractAddress').textContent = addresses.agent;
+            }
+
+            async connectWallet() {
+                try {
+                    if (!window.ethereum) {
+                        alert('Please install MetaMask to use this dashboard');
+                        return;
+                    }
+
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    this.signer = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', new ethers.BrowserProvider(window.ethereum));
+                    this.provider = new ethers.BrowserProvider(window.ethereum);
+
+                    document.getElementById('connectionStatus').className = 'status-indicator status-connected';
+                    document.getElementById('connectWallet').textContent = 'Connected';
+                    document.getElementById('contractAddress').textContent = accounts[0];
+
+                    await this.loadContracts();
+                    await this.refreshAllData();
+
+                } catch (error) {
+                    console.error('Connection error:', error);
+                    alert('Failed to connect wallet: ' + error.message);
+                }
+            }
+
+            async loadContracts() {
+                try {
+                    const abi = [
+                        'function getVersion(uint256 version) view returns (tuple(uint256 version, bytes32 bytecodeHash, uint256 deployedAt, uint256 performanceScore, bool isActive, bool isRollback, bytes32 previousVersionHash, bytes32 merkleRoot, uint256 totalVotes, uint256 yesVotes, uint256 noVotes, address deployer))',
+                        'function getActiveVersion() view returns (uint256)',
+                        'function getVersionCount() view returns (uint256)',
+                        'function proposeStrategy(bytes32 ipfsHash, uint256 duration) returns (uint256)',
+                        'function vote(uint256 proposalId, bool support) returns (bool)',
+                        'function getProposal(uint256 proposalId) view returns (tuple(uint256 id, bytes32 ipfsHash, uint256 createdAt, uint256 endTime, uint256 yesVotes, uint256 noVotes, bool executed))',
+                        'function getProposalCount() view returns (uint256)',
+                        'function getPerformanceMetrics(uint256 version) view returns (tuple(uint256 timestamp, uint256 totalTrades, uint256 winRate, uint256 sharpeRatio, uint256 maxDrawdown, bytes32 merkleRoot, bytes32 commitmentHash))',
+                        'function getVersionCount() view returns (uint256)'
+                    ];
+
+                    this.agentContract = new ethers.Contract('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb', abi, this.signer);
+                    this.governanceContract = new ethers.Contract('0x5FbDB2315678afecb367f032d93F642f64180aa3', abi, this.signer);
+                    this.historyContract = new ethers.Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', abi, this.signer);
+
+                } catch (error) {
+                    console.error('Contract loading error:', error);
+                }
+            }
+
+            async refreshAllData() {
+                const spinner = document.getElementById('refreshSpinner');
+                spinner.style.display = 'inline-block';
+
+                try {
+                    await Promise.all([
+                        this.loadVersionData(),
+                        this.loadProposalData(),
+                        this.loadPerformanceData()
+                    ]);
+
+                    this.updateDashboard();
+
+                } catch (error) {
+                    console.error('Refresh error:', error);
+                    alert('Failed to refresh data: ' + error.message);
+
+                } finally {
+                    spinner.style.display = 'none';
+                }
+            }
+
+            async loadVersionData() {
+                try {
+                    const count = await this.agentContract.getVersionCount();
+                    const versions = [];
+
+                    for (let i = 0; i < count; i++) {
+                        const version = await this.agentContract.getVersion(i);
+                        versions.push({
+                            version: Number(version.version),
+                            bytecodeHash: version.bytecodeHash,
+                            deployedAt: new Date(Number(version.deployedAt) * 1000),
+                            performanceScore: Number(version.performanceScore),
+                            isActive: version.isActive,
+                            isRollback: version.isRollback,
+                            previousVersionHash: version.previousVersionHash,
+                            merkleRoot: version.merkleRoot,
+                            totalVotes: Number(version.totalVotes),
+                            yesVotes: Number(version.yesVotes),
+                            noVotes: Number(version.noVotes),
+                            deployer: version.deployer
+                        });
+                    }
+
+                    this.versionData = versions;
+                    this.renderVersionList();
+
+                } catch (error) {
+                    console.error('Load version data error:', error);
+                }
+            }
+
+            async loadProposalData() {
+                try {
+                    const count = await this.governanceContract.getProposalCount();
+                    const proposals = [];
+
+                    for (let i = 0; i < count; i++) {
+                        const proposal = await this.governanceContract.getProposal(i);
+                        proposals.push({
+                            id: Number(proposal.id),
+                            ipfsHash: proposal.ipfsHash,
+                            createdAt: new Date(Number(proposal.createdAt) * 1000),
+                            endTime: new Date(Number(proposal.endTime) * 1000),
+                            yesVotes: Number(proposal.yesVotes),
+                            noVotes: Number(proposal.noVotes),
+                            executed: proposal.executed
+                        });
+                    }
+
+                    this.proposalData = proposals;
+                    this.renderVotingTimeline();
+
+                } catch (error) {
+                    console.error('Load proposal data error:', error);
+                }
+            }
+
+            async loadPerformanceData() {
+                try {
+                    const performance = [];
+
+                    for (const version of this.versionData) {
+                        const metrics = await this.historyContract.getPerformanceMetrics(version.version);
+                        performance.push({
+                            version: version.version,
+                            timestamp: new Date(Number(metrics.timestamp) * 1000),
+                            totalTrades: Number(metrics.totalTrades),
+                            winRate: Number(metrics.winRate) / 100,
+                            sharpeRatio: Number(metrics.sharpeRatio) / 1000,
+                            maxDrawdown: Number(metrics.maxDrawdown) / 100
+                        });
+                    }
+
+                    this.performanceData = performance;
+                    this.renderPerformanceChart();
+                    this.renderVersionComparison();
+
+                } catch (error) {
+                    console.error('Load performance data error:', error);
+                }
+            }
+
+            updateDashboard() {
+                document.getElementById('totalVersions').textContent = this.versionData.length;
+                document.getElementById('activeVersions').textContent = this.versionData.filter(v => v.isActive).length;
+                document.getElementById('totalProposals').textContent = this.proposalData.length;
+
+                const avgPerformance = this.versionData.length > 0
+                    ? (this.versionData.reduce((sum, v) => sum + v.performanceScore, 0) / this.versionData.length).toFixed(1) + '%'
+                    : '0%';
+                document.getElementById('avgPerformance').textContent = avgPerformance;
+            }
+
+            renderVersionList() {
+                const container = document.getElementById('versionList');
+
+                if (this.versionData.length === 0) {
+                    container.innerHTML = '<div class="text-center text-muted py-5"><p>No strategy versions found</p></div>';
+                    return;
+                }
+
+                container.innerHTML = this.versionData.map(version => {
+                    const badgeClass = version.isActive ? 'badge-active' : version.isRollback ? 'badge-rollback' : 'badge-inactive';
+                    const badgeText = version.isActive ? 'Active' : version.isRollback ? 'Rollback' : 'Inactive';
+
+                    return `
+                        <div class="version-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="version-badge ${badgeClass}">${badgeText}</span>
+                                    <span class="ms-2 fw-bold">Version ${version.version}</span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="small text-muted">Deployed</div>
+                                    <div>${version.deployedAt.toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                            <div class="version-details mt-2">
+                                <div class="d-flex justify-content-between">
+                                    <span>Performance Score: ${version.performanceScore}</span>
+                                    <span>Yes Votes: ${version.yesVotes} / ${version.totalVotes}</span>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar" role="progressbar" style="width: ${version.totalVotes > 0 ? (version.yesVotes / version.totalVotes * 100) : 0}%"></div>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm action-btn" onclick="dashboard.showVersionDetails(${version.version})">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderVotingTimeline() {
+                const container = document.getElementById('votingTimeline');
+
+                if (this.proposalData.length === 0) {
+                    container.innerHTML = '<div class="text-center text-muted py-5"><p>No governance proposals found</p></div>';
+                    return;
+                }
+
+                container.innerHTML = this.proposalData.map(proposal => {
+                    const statusClass = proposal.executed ? 'status-completed' : proposal.endTime < new Date() ? 'status-failed' : 'status-active';
+                    const statusText = proposal.executed ? 'Executed' : proposal.endTime < new Date() ? 'Failed' : 'Active';
+
+                    const yesPercent = proposal.yesVotes + proposal.noVotes > 0
+                        ? (proposal.yesVotes / (proposal.yesVotes + proposal.noVotes) * 100)
+                        : 0;
+
+                    return `
+                        <div class="timeline-item">
+                            <div class="proposal-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="proposal-title">Proposal #${proposal.id}</div>
+                                        <div class="small text-muted">IPFS: ${proposal.ipfsHash.substring(0, 20)}...</div>
+                                    </div>
+                                    <span class="proposal-status ${statusClass}">${statusText}</span>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="d-flex justify-content-between small text-muted">
+                                        <span>Yes: ${proposal.yesVotes}</span>
+                                        <span>No: ${proposal.noVotes}</span>
+                                    </div>
+                                    <div class="vote-bar">
+                                        <div class="vote-bar-yes" style="width: ${yesPercent}%"></div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 small text-muted">
+                                    Created: ${proposal.createdAt.toLocaleDateString()} | Ends: ${proposal.endTime.toLocaleDateString()}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderPerformanceChart() {
+                const ctx = document.getElementById('performanceChart').getContext('2d');
+
+                if (this.performanceChart) {
+                    this.performanceChart.destroy();
+                }
+
+                const labels = this.performanceData.map(p => `V${p.version}`);
+                const winRateData = this.performanceData.map(p => p.winRate * 100);
+                const sharpeData = this.performanceData.map(p => p.sharpeRatio);
+
+                this.performanceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Win Rate (%)',
+                                data: winRateData,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.4,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Sharpe Ratio',
+                                data: sharpeData,
+                                borderColor: '#6366f1',
+                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                tension: 0.4,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#94a3b8'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                grid: {
+                                    drawOnChartArea: false
+                                },
+                                ticks: {
+                                    color: '#94a3b8'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderVersionComparison() {
+                if (this.performanceData.length === 0) return;
+
+                const latest = this.performanceData[this.performanceData.length - 1];
+                const previous = this.performanceData[this.performanceData.length - 2] || latest;
+
+                document.getElementById('compWinRate').textContent = (latest.winRate * 100).toFixed(1) + '%';
+                document.getElementById('compSharpe').textContent = latest.sharpeRatio.toFixed(2);
+                document.getElementById('compDrawdown').textContent = (latest.maxDrawdown * 100).toFixed(1) + '%';
+                document.getElementById('compTrades').textContent = latest.totalTrades;
+            }
+
+            async verifyMerkleProof() {
+                try {
+                    const version = this.versionData[this.versionData.length - 1];
+                    if (!version) {
+                        alert('No version data available');
+                        return;
+                    }
+
+                    const proof = await this.historyContract.getProof(version.version);
+                    const isValid = await this.historyContract.verifyProof(version.merkleRoot, proof);
+
+                    document.getElementById('merkleProof').textContent = `
+                        Merkle Root: ${version.merkleRoot}
+                        Proof Valid: ${isValid ? '✓ YES' : '✗ NO'}
+                        Version: ${version.version}
+                        Timestamp: ${new Date(Number(version.deployedAt) * 1000).toISOString()}
+                    `;
+
+                    alert(isValid ? 'Merkle proof verified successfully!' : 'Merkle proof verification failed!');
+
+                } catch (error) {
+                    console.error('Merkle verification error:', error);
+                    alert('Verification failed: ' + error.message);
+                }
+            }
+
+            showVersionDetails(version) {
+                const versionData = this.versionData.find(v => v.version === version);
+                if (!versionData) return;
+
+                const modal = new bootstrap.Modal(document.getElementById('versionModal'));
+                document.getElementById('modalVersion').textContent = versionData.version;
+                document.getElementById('modalHash').textContent = versionData.bytecodeHash;
+                document.getElementById('modalDeployed').textContent = new Date(Number(versionData.deployedAt) * 1000).toLocaleString();
+                document.getElementById('modalPerformance').textContent = versionData.performanceScore;
+                document.getElementById('modalVotes').textContent = `${versionData.yesVotes}/${versionData.totalVotes}`;
+                document.getElementById('modalMerkle').textContent = versionData.merkleRoot;
+                modal.show();
+            }
+
+            startAutoRefresh() {
+                this.autoRefreshInterval = setInterval(() => {
+                    if (this.isAutoRefreshEnabled) {
+                        this.refreshAllData();
+                    }
+                }, 30000);
+            }
+
+            toggleAutoRefresh() {
+                this.isAutoRefreshEnabled = !this.isAutoRefreshEnabled;
+                const btn = document.getElementById('autoRefresh');
+                btn.style.opacity = this.isAutoRefreshEnabled ? '1' : '0.5';
+                btn.title = this.isAutoRefreshEnabled ? 'Disable auto-refresh' : 'Enable auto-refresh';
+            }
+        }
+
+        const dashboard = new Dashboard();
+    </script>
+</body>
+</html>
