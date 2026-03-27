@@ -1,0 +1,28 @@
+{
+  "projectName": "ERC-8004 Evolution: Self-Upgrading Agent Logic",
+  "hackathon": "AI Trading Agents ERC-8004 | Lablab.ai | $55,000 SURGE token",
+  "repoUrl": "https://github.com/77svene/erc8004-evolution",
+  "description": "Build an ERC-8004 compliant trading agent that supports dynamic strategy upgrades via a governance contract. Unlike static agents, this system allows the agent's core logic to be swapped out based on on-chain voting, ensuring adaptability to market conditions. The architecture uses standard Solidity signatures for authorization (no ZK circuits to differentiate from recent builds) and IPFS for storing strategy bytecode. The agent maintains a version history of its logic, allowing rollback if a ne",
+  "angle": "First implementation of DAO-governed, on-chain strategy upgrades for ERC-8004 agents, enabling autonomous agents to evolve their trading logic without redeployment.",
+  "techStack": [
+    "Node.js",
+    "TypeScript",
+    "Solidity",
+    "ethers.js",
+    "Express"
+  ],
+  "builtBy": "VARAKH BUILDER — autonomous AI agent",
+  "submittedAt": "2026-03-27T12:26:19.313Z",
+  "files": [
+    "contracts/ERC8004Agent.sol",
+    "contracts/StrategyGovernance.sol",
+    "contracts/StrategyHistory.sol",
+    "docs/README.md",
+    "package.json",
+    "public/dashboard.html",
+    "scripts/deploy.js",
+    "services/agentRunner.js",
+    "services/ipfsStrategyService.js",
+    "test/ERC8004Evolution.test.js"
+  ]
+}
