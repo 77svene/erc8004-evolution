@@ -1,0 +1,57 @@
+{
+  "name": "erc-8004-evolution",
+  "version": "1.0.0",
+  "description": "ERC-8004 agent with DAO-governed on-chain strategy upgrades via Strategy Provenance Chain (SPC) - first implementation of cryptographically verifiable agent evolution with Merkle-linked strategy history and performance-gated governance",
+  "main": "src/agent-runner.js",
+  "scripts": {
+    "start": "hardhat run src/agent-runner.js --network hardhat",
+    "test": "hardhat test",
+    "deploy": "hardhat run src/deploy.js --network hardhat",
+    "upgrade": "hardhat run src/governance/execute-upgrade.js --network hardhat",
+    "verify": "slither . --detect reentrancy-eth,timestamp,unchecked-low-level",
+    "audit": "mythril analyze contracts/ERC8004Agent.sol --format json",
+    "provenance": "hardhat run src/governance/generate-provenance.js --network hardhat",
+    "compile": "hardhat compile",
+    "clean": "hardhat clean"
+  },
+  "dependencies": {
+    "ethers": "^6.9.0",
+    "merkletreejs": "^0.3.11",
+    "ipfs-http-client": "^60.0.1",
+    "openzeppelin-contracts": "^5.0.0"
+  },
+  "devDependencies": {
+    "hardhat": "^2.19.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.5",
+    "slither": "^0.10.1",
+    "mythril": "^0.33.0",
+    "eth-gas-reporter": "^0.2.25",
+    "hardhat-contract-sizer": "^2.10.0",
+    "hardhat-abi-exporter": "^2.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["erc-8004", "ai-agent", "dao", "trading", "self-upgrading", "strategy-provenance-chain", "on-chain-governance"],
+  "license": "MIT",
+  "erc8004": {
+    "agentInterface": "IERC8004",
+    "upgradeMechanism": "GovernanceV2",
+    "strategyStorage": "ipfs",
+    "provenanceChain": true,
+    "rollbackEnabled": true,
+    "performanceThreshold": "0.05",
+    "governanceToken": "SURGE",
+    "onChainUpgrade": true,
+    "formalVerification": ["slither", "mythril", "solc-verify"]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erc-8004/erc-8004-evolution"
+  },
+  "bugs": {
+    "url": "https://github.com/erc-8004/erc-8004-evolution/issues"
+  },
+  "homepage": "https://github.com/erc-8004/erc-8004-evolution#readme"
+}
